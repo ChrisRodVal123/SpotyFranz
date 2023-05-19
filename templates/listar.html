@@ -1,34 +1,21 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Discoteca</title>
-    </head>
-    <body>
-        <div class="container">
-            <div class="page-header">
-                <h1>{{ titulo }}</h1>
-            </div>
-            <table class="table table-striped table-responsive table-bordered">
+{% extends "template.html" %}
+{% block contenido %}
+<table class="table table-striped table-responsive table-bordered"> 
                 <thead class="thead-default">
                     <tr>
                         <th>Titulo</th>
                         <th>Categoria</th>
                         <th>Idioma</th>
                     </tr>
-                </thead>
-                
+                </thead> 
                 <tbody>
                     {% for musica in musicas %}
                     <tr>
-                        <td>{{ musica.titulo }}</td>
-                        <td>{{ musica.categoria }}</td>
-                        <td>{{ musica.idioma }}</td>
-                    </tr>
+                        <th>{{ musica.titulo }}</th>
+                        <th>{{ musica.categoria }}</th>
+                        <th>{{ musica.idioma }}</th>
+                    </tr>                    
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-    </body>
-</html>
+{% endblock %}
