@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Discoteca</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
-    <link rel="stylesheet" href="../static/bootstrap.css">
   </head>
   <body>
     <div class="container">
@@ -21,7 +20,8 @@
         {% endwith %}
 
         <h1>Iniciar sesión</h1>
-        <form method="POST" action="/autenticar">
+        <form method="POST" action="{{ url_for('autenticar') }}">
+            <input type="hidden" name="proxima" value="{{ proxima }}">
             <p><label>Nombre de usuario:</label> <input class="form-control" type="text" name="usuario" required></p>
             <p><label>Clave:</label> <input class="form-control" type="password" name="clave" required></p>
             <p><button class="btn btn-primary" type="submit">Entrar</button></p>
