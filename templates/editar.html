@@ -1,0 +1,21 @@
+{% extends "template.html" %}
+{% block contenido %}
+      <form action="{{ url_for('actualizar') }}" method="post">
+        <fieldset>
+          <input type="hidden" name="id" value="{{ cancion.id }}">
+          <div class="form-group">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" class="form-control" value="{{ cancion.titulo }}">
+          </div>
+          <div class="form-group">
+            <label for="categoria">Categoría</label>
+            <input type="text" id="categoria" name="categoria" class="form-control" value="{{ cancion.categoria }}">
+          </div>
+          <div class="form-group">
+            <label for="idioma">Idioma</label>
+            <input type="text" id="idioma" name="idioma" class="form-control" value="{{ cancion.idioma }}">
+          </div>
+          <button type="submit" class="btn btn-primary btn-salvar">Grabar</button>
+        </fieldset>
+      </form>
+{% endblock %}
