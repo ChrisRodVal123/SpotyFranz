@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, url_for,redirect, session, fl
 from app import app, db
 from models import Canciones, Usuarios
 
-from helpers import recuperar_audio, eliminar_archivo
+from helpers import recuperar_audio, eliminar_archivo, FormularioCancion, FormularioUsuario
 import time
 
         
@@ -24,16 +24,22 @@ def nuevoregistro():
     if session['usuario_logueado'] == None:
         flash('Usuario no conectado.')
         return redirect(url_for('login', proxima = url_for('nuevoregistro')))
-    else:
-        flash('Usuario conectado.') 
-        return render_template('nuevoRegistro.html', titulo='Nueva Canción')
+    
+    form = FormularioCancion()
+    return render_template('nuevoRegistro.html', titulo='Nueva Canción', form=form)
 
 
 @app.route('/crear', methods=['POST',])
 def crear():
-    titulo = request.form['titulo']
-    categoria = request.form['categoria']
-    idioma = request.form['idioma']
+    form = FormularioCancion(request.form)
+    
+    if not form.validate_on_submit():
+        return redirect(url_for('nuevoregistro'))
+
+    
+    titulo = form.titulo.data
+    categoria = form.categoria.data
+    idioma = form.idioma.data
 
     cancion = Canciones.query.filter_by(titulo=titulo).first()
 
@@ -58,23 +64,33 @@ def editar(id):
     if 'usuario_logueado' not in session or session['usuario_logueado'] == None:
         return redirect(url_for('login', proxima=url_for('editar', id=id)))
     cancion = Canciones.query.filter_by(id=id).first()
-    return render_template('editar.html', titulo='Editando Canción', cancion=cancion)
+    
+    form = FormularioCancion()
+    form.titulo.data = cancion.titulo
+    form.categoria.data = cancion.categoria
+    form.idioma.data = cancion.idioma
+    audio_cancion = recuperar_audio(id)
+    
+    return render_template('editar.html', titulo='Editando Canción', cancion=cancion, form=form )
 
 @app.route('/actualizar', methods=['POST',])
 def actualizar():
-    cancion = Canciones.query.filter_by(id=request.form['id']).first()
-    cancion.titulo = request.form['titulo']
-    cancion.categoria = request.form['categoria']
-    cancion.idioma = request.form['idioma']
+    form = FormularioCancion(request.form)
+    
+    if form.validate_on_submit():
+        cancion = Canciones.query.filter_by(id=request.form['id']).first()
+        cancion.titulo = form.titulo.data
+        cancion.categoria = form.categoria.data
+        cancion.idioma = form.idioma.data
 
-    db.session.add(cancion)
-    db.session.commit()
+        db.session.add(cancion)
+        db.session.commit()
 
-    timestamp = time.time()
-    eliminar_archivo(cancion.id)   # borra archivo de audio
-    archivo = request.files['archivo']
-    #archivo.save(f'static/upload/{cancion.id}-{timestamp}.mp3')
-    archivo.save(f'static/upload/{cancion.id}.mp3')
+        timestamp = time.time()
+        eliminar_archivo(cancion.id)   # borra archivo de audio
+        archivo = request.files['archivo']
+        #archivo.save(f'static/upload/{cancion.id}-{timestamp}.mp3')
+        archivo.save(f'static/upload/{cancion.id}.mp3')
 
     return redirect(url_for('index'))
 
@@ -94,14 +110,17 @@ def eliminar(id):
 @app.route('/login')
 def login():
     proxima = request.args.get('proxima')
-    return render_template('login.html', proxima = proxima)
+    form = FormularioUsuario()
+    return render_template('login.html', proxima=proxima, form=form)
 
 
 @app.route('/autenticar', methods=['POST',])
 def autenticar():
-    usuario = Usuarios.query.filter_by(nickname=request.form['usuario']).first()
+    form = FormularioUsuario(request.form)
+    usuario = Usuarios.query.filter_by(nickname=form.nickname.data).first()
+    
     if usuario:
-        if request.form['clave'] == usuario.clave:
+        if form.clave.data == usuario.clave:
             session['usuario_logueado'] = usuario.nickname
             flash(usuario.nickname + ' ¡conectado con éxito!')
             proxima_pagina = request.form['proxima']

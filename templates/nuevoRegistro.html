@@ -1,23 +1,25 @@
 {% extends "template.html" %}
 {% block contenido %}
-
   <form action="{{ url_for('crear') }}" method="post" enctype="multipart/form-data">
     <input type="file" name="archivo" accept=".mp3" >
     <fieldset>
+      {{ form.csrf_token() }}
       <div class="form-group">
-        <label for="nome">Título</label>
-        <input type="text" id="titulo" name="titulo" class="form-control">
+        {{ form.titulo.label(class="form-label") }}
+        {{ form.titulo(class="form-control") }}
       </div>
       <div class="form-group">
-        <label for="categoria">Categoria</label>
-        <input type="text" id="categoria" name="categoria" class="form-control">
+        {{ form.categoria.label(class="form-label") }}
+        {{ form.categoria(class="form-control") }}
       </div>
       <div class="form-group">
-        <label for="console">Idioma</label>
-        <input type="text" id="idioma" name="idioma" class="form-control">
+        {{ form.idioma.label(class="form-label") }}
+        {{ form.idioma(class="form-control") }}
       </div>
-      <button type="submit" class="btn btn-primary btn-salvar mt-4">Grabar</button>
+      <div class="form-group">
+        {{ form.grabar(class="btn btn-primary") }}
+        <a class="btn btn-danger" href={{ url_for('index') }}>Inicio</a>
+      </div>
     </fieldset>
   </form>
-  <a class="btn btn-danger mt-4" href={{ url_for('index') }}>Inicio</a>
 {% endblock %}
