@@ -1,6 +1,8 @@
 {% extends "template.html" %}
 {% block contenido %}
-
+    <a class="btn btn-primary mt-4 mb-4" href={{ url_for('login') }}>Login</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-danger" href={{ url_for('logout') }}>Logout</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-secondary" href={{ url_for('nuevoregistro') }}>Nueva Canción</a>
     <table class="table table-striped table-responsive table-bordered">
         <thead class="thead-default">
             <tr>
@@ -15,6 +17,8 @@
                 <td>{{ musica.titulo }}</td>
                 <td>{{ musica.categoria }}</td>
                 <td>{{ musica.idioma }}</td>
+                <td><audio controls><source src="static/upload/{{musica.id}}.mp3" type="audio/mp3">Tu navegador no soporta audio HTML5.</audio></td>
+                
                 <td>
                     <a href="{{ url_for('editar', id=musica.id) }}">Editar</a>
                     <a href="{{ url_for('eliminar', id=musica.id) }}">Eliminar</a>

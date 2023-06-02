@@ -1,6 +1,7 @@
 {% extends "template.html" %}
 {% block contenido %}
-      <form action="{{ url_for('actualizar') }}" method="post">
+      <form action="{{ url_for('actualizar') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="archivo" accept=".mp3" >
         <fieldset>
           <input type="hidden" name="id" value="{{ cancion.id }}">
           <div class="form-group">
@@ -15,7 +16,8 @@
             <label for="idioma">Idioma</label>
             <input type="text" id="idioma" name="idioma" class="form-control" value="{{ cancion.idioma }}">
           </div>
-          <button type="submit" class="btn btn-primary btn-salvar">Grabar</button>
+          <button type="submit" class="btn btn-primary mt-4">Grabar</button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a class="btn btn-danger mt-4" href={{ url_for('index') }}>Inicio</a>
         </fieldset>
       </form>
 {% endblock %}

@@ -2,11 +2,21 @@
 from flask import Flask, render_template, request, url_for,redirect, session, flash
 from app import app, db
 from models import Canciones, Usuarios
-          
+
+from helpers import recuperar_audio, eliminar_archivo
+import time
+
+        
 @app.route('/')
 def index():
     lista = Canciones.query.order_by(Canciones.id)
-    return render_template('listar.html',titulo= 'Canciones', musicas=lista)
+
+    nombres_archivos=[]
+    for item in lista:
+        nombres_archivos.append(recuperar_audio(item.id))
+        print(recuperar_audio(item.id))
+
+    return render_template('listar.html',titulo= 'Canciones', musicas=lista, audio= nombres_archivos)
 
 
 @app.route('/nuevoregistro')
@@ -35,6 +45,11 @@ def crear():
     db.session.add(nueva_cancion)
     db.session.commit()
 
+    timestamp = time.time()
+    archivo = request.files['archivo']
+    #archivo.save(f'static/upload/{nueva_cancion.id}-{timestamp}.mp3')
+    archivo.save(f'static/upload/{nueva_cancion.id}.mp3')
+
     return redirect(url_for('index'))
 
 
@@ -55,6 +70,12 @@ def actualizar():
     db.session.add(cancion)
     db.session.commit()
 
+    timestamp = time.time()
+    eliminar_archivo(cancion.id)   # borra archivo de audio
+    archivo = request.files['archivo']
+    #archivo.save(f'static/upload/{cancion.id}-{timestamp}.mp3')
+    archivo.save(f'static/upload/{cancion.id}.mp3')
+
     return redirect(url_for('index'))
 
 @app.route('/eliminar/<int:id>')
@@ -62,6 +83,7 @@ def eliminar(id):
     if 'usuario_logueado' not in session or session['usuario_logueado'] == None:
         return redirect(url_for('login'))
 
+    eliminar_archivo(id)   # borra archivo de audio
     Canciones.query.filter_by(id=id).delete()
     db.session.commit()
     flash('¡Canción eliminada con éxito!')

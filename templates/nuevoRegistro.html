@@ -1,7 +1,8 @@
 {% extends "template.html" %}
 {% block contenido %}
 
-  <form action="{{ url_for('crear') }}" method="post">
+  <form action="{{ url_for('crear') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="archivo" accept=".mp3" >
     <fieldset>
       <div class="form-group">
         <label for="nome">Título</label>
@@ -18,4 +19,5 @@
       <button type="submit" class="btn btn-primary btn-salvar mt-4">Grabar</button>
     </fieldset>
   </form>
+  <a class="btn btn-danger mt-4" href={{ url_for('index') }}>Inicio</a>
 {% endblock %}
